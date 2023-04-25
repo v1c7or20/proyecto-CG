@@ -32,6 +32,21 @@ public:
         normal = pi - centro;
         normal.normalize();
         return true;
+    }
+
+    void moveUp(float step) override {
+        centro.y += step;
+    }
+
+    void moveDown(float step) override{
+        centro.y += step;
+    }
+
+    void moveLeft() override {
+
+    }
+
+    void moveRight() override {
 
     }
 };

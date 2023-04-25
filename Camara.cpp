@@ -72,88 +72,90 @@ vec3 Camara::calcular_color(Rayo rayo, const std::vector<Objeto*>& objetos, std:
         }
     }
 
-    if (is_intersect){
-        vec3 pi = rayo.ori + rayo.dir * distance;
-        vec3 L = luces.at(0)->pos - pi;
-        L.normalize();
-        vec3 luz_ambiente = vec3(1,1,1) * 0.2;
+    for (auto luz: luces) {
+        if (is_intersect){
+            vec3 pi = rayo.ori + rayo.dir * distance;
+            vec3 L = luz->pos - pi;
+            L.normalize();
+            vec3 luz_ambiente = vec3(1,1,1) * 0.2;
 
-        bool is_shadow = false;
-        Rayo shadow;
-        shadow.ori = pi + normal*0.0005;
-        shadow.dir = L;
+            bool is_shadow = false;
+            Rayo shadow;
+            shadow.ori = pi + normal*0.0005;
+            shadow.dir = L;
 
-        for (auto obj : objetos){
-            if (obj->intersectar(shadow, distance_tmp, normal_tmp)){
-                is_shadow = true;
+            for (auto obj : objetos){
+                if (obj->intersectar(shadow, distance_tmp, normal_tmp)){
+                    is_shadow = true;
+                }
             }
-        }
 
-        // evaluar por sombras
-        if (!is_shadow){
-            vec3 luz_difusa = vec3(0,0,0);
-            float factor_difuso = normal.punto(L);
+            // evaluar por sombras
+            if (!is_shadow){
+                vec3 luz_difusa = vec3(0,0,0);
+                float factor_difuso = normal.punto(L);
 
-            if (factor_difuso > 0)
-                luz_difusa = luces.at(0)->color * pObjeto->k_difusa * factor_difuso;
+                if (factor_difuso > 0)
+                    luz_difusa = luz->color * pObjeto->k_difusa * factor_difuso;
 
-            vec3 r =  (normal * 2 * (L.punto(normal))) - L ;
-            vec3 V = -rayo.dir;
-            r.normalize();
-            float factor_especular = r.punto(rayo.dir*(-1));
-            vec3 luz_especular = vec3(0,0,0);
+                vec3 r =  (normal * 2 * (L.punto(normal))) - L ;
+                vec3 V = -rayo.dir;
+                r.normalize();
+                float factor_especular = r.punto(rayo.dir*(-1));
+                vec3 luz_especular = vec3(0,0,0);
 
-            if (factor_especular > 0)
-                luz_especular = luces.at(0)->color * pObjeto->k_especular * pow(factor_especular, pObjeto->n);
+                if (factor_especular > 0)
+                    luz_especular = luz->color * pObjeto->k_especular * pow(factor_especular, pObjeto->n);
 
-            color = pObjeto->color * (luz_ambiente + luz_difusa + luz_especular);
+                color = color + pObjeto->color * (luz_ambiente + luz_difusa + luz_especular);
 
-            if (pObjeto->es_transparente){
+                if (pObjeto->es_transparente){
 // kr kt
-                vec3 refractionColor(0,0,0);
-                // compute fresnel
-                float kr;
-                fresnel(rayo.dir, normal, pObjeto->index_refraction, kr);
-                bool outside = rayo.dir.punto(normal) < 0;
-                vec3 bias = 0.0005 * normal;
-                // compute refraction if it is not a case of total internal reflection
-                if (kr < 1) {
-                    vec3 refractionDirection = refract(rayo.dir, normal, pObjeto->index_refraction);
-                    refractionDirection.normalize();
-                    vec3 refractionRayOrig = outside ? pi - bias : pi + bias;
-                    Rayo rayo_refraccion(refractionRayOrig, refractionDirection);
-                    refractionColor = calcular_color(rayo_refraccion, objetos, luces, prof + 1);
-                }
+                    vec3 refractionColor(0,0,0);
+                    // compute fresnel
+                    float kr;
+                    fresnel(rayo.dir, normal, pObjeto->index_refraction, kr);
+                    bool outside = rayo.dir.punto(normal) < 0;
+                    vec3 bias = 0.0005 * normal;
+                    // compute refraction if it is not a case of total internal reflection
+                    if (kr < 1) {
+                        vec3 refractionDirection = refract(rayo.dir, normal, pObjeto->index_refraction);
+                        refractionDirection.normalize();
+                        vec3 refractionRayOrig = outside ? pi - bias : pi + bias;
+                        Rayo rayo_refraccion(refractionRayOrig, refractionDirection);
+                        refractionColor = calcular_color(rayo_refraccion, objetos, luces, prof + 1);
+                    }
 
-                vec3 reflectionDirection = 2 * (V.punto(normal)) * normal - V;// reflect(dir, normal).normalize();
-                reflectionDirection.normalize();
-                vec3 reflectionRayOrig = outside ? pi + bias : pi - bias;
-                Rayo rayo_reflexivo;
-                rayo_reflexivo.ori = reflectionRayOrig;
-                rayo_reflexivo.dir = reflectionDirection;
-                vec3 reflectionColor = calcular_color(rayo_reflexivo, objetos, luces, prof + 1);
-
-                // mix the two
-                color = color + reflectionColor * kr + refractionColor * (1 - kr);
-            }else{
-                if (pObjeto->k_espejo > 0 and prof + 1 <= prof_max) {
-                    // rayos reflexivos
+                    vec3 reflectionDirection = 2 * (V.punto(normal)) * normal - V;// reflect(dir, normal).normalize();
+                    reflectionDirection.normalize();
+                    vec3 reflectionRayOrig = outside ? pi + bias : pi - bias;
                     Rayo rayo_reflexivo;
-                    rayo_reflexivo.ori = pi + 0.0005 * normal;
-                    rayo_reflexivo.dir = 2 * (V.punto(normal)) * normal - V;
-                    rayo_reflexivo.dir.normalize();
-                    vec3 color_reflexivo = calcular_color(rayo_reflexivo, objetos, luces, prof + 1);
-                    color = color + pObjeto->k_espejo * color_reflexivo;
+                    rayo_reflexivo.ori = reflectionRayOrig;
+                    rayo_reflexivo.dir = reflectionDirection;
+                    vec3 reflectionColor = calcular_color(rayo_reflexivo, objetos, luces, prof + 1);
+
+                    // mix the two
+                    color = color + reflectionColor * kr + refractionColor * (1 - kr);
+                }else{
+                    if (pObjeto->k_espejo > 0 and prof + 1 <= prof_max) {
+                        // rayos reflexivos
+                        Rayo rayo_reflexivo;
+                        rayo_reflexivo.ori = pi + 0.0005 * normal;
+                        rayo_reflexivo.dir = 2 * (V.punto(normal)) * normal - V;
+                        rayo_reflexivo.dir.normalize();
+                        vec3 color_reflexivo = calcular_color(rayo_reflexivo, objetos, luces, prof + 1);
+                        color = color + pObjeto->k_espejo * color_reflexivo;
+                    }
                 }
+                color.max_to_one();
+            }else{
+                color = color + pObjeto->color * (luz_ambiente);
             }
             color.max_to_one();
-        }else{
-            color = pObjeto->color * (luz_ambiente);
-        }
-        color.max_to_one();
 
-    }else{
-        color.set(0,0,0);
+        }else{
+            color.set(0,0,0);
+        }
     }
     pObjeto = nullptr;
     return color;

@@ -52,5 +52,21 @@ public:
 
         return true;
     }
+
+    void moveUp(float d) override {
+
+    }
+
+    void moveDown(float d) override {
+
+    }
+
+    void moveLeft() override {
+
+    }
+
+    void moveRight() override {
+
+    }
 };
 #endif //CG2023_CUBO_H

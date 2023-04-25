@@ -48,6 +48,22 @@ public:
         }
         return false; //no intersection
     }
+
+    void moveUp(float d) override {
+
+    }
+
+    void moveDown(float d) override {
+
+    }
+
+    void moveLeft() override {
+
+    }
+
+    void moveRight() override {
+
+    }
 };
 
 #endif //CG2023_CILINDRO_H

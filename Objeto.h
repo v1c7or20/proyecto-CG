@@ -26,6 +26,10 @@ public:
     {this->k_difusa=kdifusa; this->k_especular=kespecular; this->n = n;}
 
     virtual bool intersectar(Rayo ray, float &t, vec3 &normal)=0;
+    virtual void moveUp(float)=0;
+    virtual void moveDown(float)=0;
+    virtual void moveLeft()=0;
+    virtual void moveRight()=0;
 };
 
 #endif //CG2023_OBJETO_H
