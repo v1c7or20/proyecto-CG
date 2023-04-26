@@ -16,6 +16,7 @@ public:
     float k_espejo; // constante espejo
     bool es_transparente;
     float index_refraction; // index of refraction
+    bool es_luz = false;
 
 
     Objeto(vec3 color): color{color}{ k_espejo = 0.7f;}
