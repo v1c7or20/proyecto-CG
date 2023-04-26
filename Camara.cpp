@@ -95,7 +95,7 @@ vec3 Camara::calcular_color(Rayo rayo, const std::vector<Objeto*>& objetos, std:
                 vec3 luz_difusa = vec3(0,0,0);
                 float factor_difuso = normal.punto(L);
 
-                if (factor_difuso > 0)
+                if (factor_difuso > 0 and not pObjeto->es_luz)
                     luz_difusa = luz->color * pObjeto->k_difusa * factor_difuso;
 
                 vec3 r =  (normal * 2 * (L.punto(normal))) - L ;
@@ -104,7 +104,7 @@ vec3 Camara::calcular_color(Rayo rayo, const std::vector<Objeto*>& objetos, std:
                 float factor_especular = r.punto(rayo.dir*(-1));
                 vec3 luz_especular = vec3(0,0,0);
 
-                if (factor_especular > 0)
+                if (factor_especular > 0 and not pObjeto->es_luz)
                     luz_especular = luz->color * pObjeto->k_especular * pow(factor_especular, pObjeto->n);
 
                 color = color + pObjeto->color * (luz_ambiente + luz_difusa + luz_especular);

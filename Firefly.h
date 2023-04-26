@@ -7,7 +7,7 @@
 #include "Esfera.h"
 #include "Luz.h"
 
-class firefly{
+class Firefly{
 public:
     Esfera * cuerpo;
     Luz * luz;
@@ -41,6 +41,22 @@ public:
         cuerpo->centro.z-=step;
         luz->pos.z-=step;
     }
+
+    void upDown(float step, int i){
+        if (i/20 % 2 == 0){
+            moveUp(step);
+        }else{
+            moveDown(step);
+        }
+    }
+    void downUp(float step, int i){
+        if (i/20 % 2 == 1){
+            moveUp(step);
+        }else{
+            moveDown(step);
+        }
+    }
+
 };
 
 #endif //CG2023_FIREFLY_H
