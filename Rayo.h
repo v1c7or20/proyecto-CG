@@ -14,6 +14,8 @@ public:
         ori = _ori;
         dir = _dir;
     }
+    Rayo(vec3 _ori) { ori = _ori; }
+
 };
 
 
