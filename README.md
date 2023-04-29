@@ -12,4 +12,4 @@
 
 ### Tercer Intento
 
-![Gif 3](https://github.com/v1c7or20/proyecto-CG/blob/main/imagenes/second.gif)
+![Gif 3](https://github.com/v1c7or20/proyecto-CG/blob/main/imagenes/third.gif)
