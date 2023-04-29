@@ -5,6 +5,9 @@
 int main() {
     srand( (unsigned)time( nullptr ) );
 
+    int num_threads = omp_get_max_threads();
+    omp_set_num_threads(num_threads);
+
     std::vector<Objeto *>objetos;
     Objeto *p1 = nullptr;
     p1 = new Plano(vec3(0,1,0), 2, vec3(0.41, 0.71, 0.61));
@@ -116,18 +119,21 @@ int main() {
     fly7->cuerpo = (Esfera *)objetos.at(objetos.size()-1);
 
     Camara cam;
-    for (int x = 1, n=1; x <= 720; x++, n++){
+    int n=1;
+#pragma omp parallel for private(cam)
+    for (int x = 1; x <= 720; x++){
         cam.configurar(3,60,600,800,
                        vec3(1+float(x)/10,25 + float(x)/20,80),
                        vec3(0,0,0),
                        vec3(0,1,0));
-        fly1->upDown(0.2,n/4);
-        fly2->downUp(0.1,n/8);
-        fly3->downUp(0.1,n/2);
-        fly4->upDown(0.1,n/5);
-        fly6->upDown(0.1,n);
-        fly7->upDown(0.1,n);
-        cam.renderizar(objetos, luces, n);
+        fly1->upDown(0.2,x/4);
+        fly2->downUp(0.1,x/8);
+        fly3->downUp(0.1,x/2);
+        fly4->upDown(0.1,x/5);
+        fly6->upDown(0.1,x);
+        fly7->upDown(0.1,x);
+        cam.renderizar(objetos, luces, x);
+        n++;
     }
     return 0;
 }
