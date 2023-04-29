@@ -30,6 +30,19 @@ int main() {
     p1->index_refraction = 1.2;
     objetos.emplace_back(p1);
 
+    p1 = new Esfera(vec3(30,10,-15), 4, vec3(1,0,0));
+    p1->setConstantes(0.6, 0.4, 32);
+    p1->k_espejo = 0.8;
+    p1->es_transparente = false;
+    p1->index_refraction = 1.2;
+    objetos.emplace_back(p1);
+
+    p1 = new Cubo(vec3(-3,32,0), vec3(0,38,4), vec3(0,1,0));
+    p1->setConstantes(0.6, 0.4, 32);
+    p1->k_espejo = 1;
+    p1->es_transparente = false;
+    objetos.emplace_back(p1);
+
     std::vector<Luz*> luces;
     Luz *luz = new Luz(vec3(0,35,20), vec3(1,1,1));
     luces.emplace_back(luz);

@@ -102,7 +102,7 @@ vec3 Camara::calcular_color(Rayo rayo, const std::vector<Objeto*>& objetos, std:
                 float factor_especular = R.punto(V);
                 if (factor_especular > 0 and not pObjeto->es_luz)
                     luz_especular = luz->color * pObjeto->k_especular * pow(factor_especular, pObjeto->n);
-                luz_total = (luz_total + luz_difusa + luz_especular) / log(distancia);
+                luz_total = (luz_total + luz_difusa + luz_especular) / (0.5 + log10(distancia));
             } else {
             }
         }
