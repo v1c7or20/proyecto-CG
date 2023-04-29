@@ -34,6 +34,12 @@ public:
         y *= v.y;
         z *= v.z;
     }
+
+    void operator+=(vec3 v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+    }
     void normalize() {
         double m = modulo();
         x = x/m;
