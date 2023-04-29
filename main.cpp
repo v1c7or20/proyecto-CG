@@ -35,7 +35,7 @@ int main() {
     luces.emplace_back(luz);
 
 
-    Firefly * fly1, * fly2, * fly3, * fly4;
+    Firefly * fly1, * fly2, * fly3, * fly4, * fly5, * fly6, * fly7, * fly8;
 
     luz = new Luz(vec3(0,3,0), vec3(1, 0.968, 0));
     luces.emplace_back(luz);
@@ -75,17 +75,45 @@ int main() {
     fly4->luz = luces.at(luces.size()-1);
     fly4->cuerpo = (Esfera *)objetos.at(objetos.size()-1);
 
+    luz = new Luz(vec3(9,12,3), vec3(1, 0.968, 0));
+    luces.emplace_back(luz);
+    p1 = new Esfera(vec3(9,12,3), 0.5, vec3(1, 0.968, 0), 0.6);
+    p1->es_luz=true;
+    objetos.emplace_back(p1);
+    fly5 = new Firefly;
+    fly5->luz = luces.at(luces.size()-1);
+    fly5->cuerpo = (Esfera *)objetos.at(objetos.size()-1);
+
+    luz = new Luz(vec3(-4,12,-6), vec3(1, 0.968, 0));
+    luces.emplace_back(luz);
+    p1 = new Esfera(vec3(-4,12,-6), 0.5, vec3(1, 0.968, 0), 0.6);
+    p1->es_luz=true;
+    objetos.emplace_back(p1);
+    fly6 = new Firefly;
+    fly6->luz = luces.at(luces.size()-1);
+    fly6->cuerpo = (Esfera *)objetos.at(objetos.size()-1);
+
+    luz = new Luz(vec3(7,8,5), vec3(1, 0.968, 0));
+    luces.emplace_back(luz);
+    p1 = new Esfera(vec3(7,8,5), 0.5, vec3(1, 0.968, 0), 0.6);
+    p1->es_luz=true;
+    objetos.emplace_back(p1);
+    fly7 = new Firefly;
+    fly7->luz = luces.at(luces.size()-1);
+    fly7->cuerpo = (Esfera *)objetos.at(objetos.size()-1);
 
     Camara cam;
-    for (int x = 1, n=1; x <= 240; x++, n++){
+    for (int x = 1, n=1; x <= 720; x++, n++){
         cam.configurar(3,60,600,800,
-                       vec3(1+float(x)/4,25 + float(x)/10,80),
+                       vec3(1+float(x)/10,25 + float(x)/20,80),
                        vec3(0,0,0),
                        vec3(0,1,0));
-        fly1->upDown(1,2*n);
-        fly2->downUp(1,n);
-        fly3->downUp(1,2*n);
-        fly4->upDown(1,n);
+        fly1->upDown(0.2,n/4);
+        fly2->downUp(0.1,n/8);
+        fly3->downUp(0.1,n/2);
+        fly4->upDown(0.1,n/5);
+        fly6->upDown(0.1,n);
+        fly7->upDown(0.1,n);
         cam.renderizar(objetos, luces, n);
     }
     return 0;
